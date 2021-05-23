@@ -62,14 +62,14 @@ BYPARED (23), BYSES1QU (31), BYSES2QU (33), BYOCCHS (41), BYOCC30 (42), BYSQSTAT
 
 ```{r}
 ### eliminating variables
-datasub2<-datasub1[,-c(23,31,33,41,42,44,45,47,48:52,54:61,63:69,71:76,82:94, 106:109,113:115,117:164, 166:171,173:181, 183:312,315:2254)]
+datasub2<-datasub1[,-c(31,33,41,42,44,45,47,48:52,54:61,63:69,71:76,82:94, 106:109,113:115,117:164, 166:171,173:181, 183:312,315:2254)]
 str(datasub2)
 ```
 
 
 
 ```{r}
-datasub3<- datasub2[,-c(2,3,4:6,8,9, 29:30,35,39,43,48, 62:65) ]
+datasub3<- datasub2[,-c(2,3,4:6,8,9, 30:31,36,40,44,49, 63:66) ]
 str(datasub3)
 ```
 
@@ -78,7 +78,6 @@ library(dplyr)
 datasub4<- mutate(datasub3, BYAPIB = ifelse(as.factor(BYS33A)==c("-9","-8","-7","-6","-4")|as.factor(BYS33B)==c("-9","-8","-7","-6","-4"),"-9",ifelse(as.factor(BYS33A)=="1"|as.factor(BYS33B)=="1", "1","0")))
 datasub4$BYAPIB<-as.factor(datasub4$BYAPIB)
 summary(datasub4$BYAPIB)
-datasub4$BYAPIB<-as.numeric(datasub4$BYAPIB)
 ```
 
 ```{r,message=FALSE,warning=FALSE}
@@ -88,7 +87,6 @@ summary(datasub4$BYERACE)
 datasub5<- mutate(datasub4, BYERCEMTCH = ifelse(as.factor(BYRACE)==c("-8","-4")|BYERACE==c("-8","-4"),"-9",ifelse(as.factor(BYRACE)==BYERACE, "1","0")))
 datasub5$BYERCEMTCH<-as.factor(datasub5$BYERCEMTCH)
 summary(datasub5$BYERCEMTCH)
-datasub5$BYERCEMTCH<-as.numeric(datasub5$BYERCEMTCH)
 ```
 
 
@@ -100,7 +98,6 @@ summary(datasub5$BYMRACE)
 datasub6<- mutate(datasub5, BYMRCEMTCH = ifelse(as.factor(BYRACE)==c("-8","-4")|BYMRACE==c("-8","-4"),"-9",ifelse(as.factor(BYRACE)==BYMRACE, "1","0")))
 datasub6$BYMRCEMTCH<-as.factor(datasub6$BYMRCEMTCH)
 summary(datasub6$BYMRCEMTCH)
-datasub6$BYMRCEMTCH<-as.numeric(datasub6$BYMRCEMTCH)
 ```
 
 ```{r}
@@ -109,21 +106,102 @@ colnames(datasub6)
 
 
 ```{r}
-fdata<-datasub6[,-c(4,42,44,49,50)]
-str(fdata)
-attach(fdata)
+datasub7<-datasub6[,-c(4,43,45,50,51)]
+colnames(datasub7)
+test<-datasub7[,-c(2,8,16:18)]
 ```
+
+```{r}
+test$BYSEX<- replace(test$BYSEX, which(test$BYSEX<0),NA)
+test$BYSTLANG<- replace(test$BYSTLANG, which(test$BYSTLANG<0),NA)
+test$BYHOMLNG<- replace(test$BYHOMLNG, which(test$BYHOMLNG<0),NA)
+test$BYSTLNG2<- replace(test$BYSTLNG2, which(test$BYSTLNG2<0),NA)
+test$BYDOB_P<- replace(test$BYDOB_P, which(test$BYDOB_P<0),NA)
+test$BYPARLNG<- replace(test$BYPARLNG, which(test$BYPARLNG<0),NA)
+test$BYPLANG<- replace(test$BYPLANG, which(test$BYPLANG<0),NA)
+test$BYFCOMP<- replace(test$BYFCOMP, which(test$BYFCOMP<0),NA)
+test$BYSIBSTR<- replace(test$BYSIBSTR, which(test$BYSIBSTR<0),NA)
+test$BYSIBHOM<- replace(test$BYSIBHOM, which(test$BYSIBHOM<0),NA)
+test$BYGNSTAT<- replace(test$BYGNSTAT, which(test$BYGNSTAT<0),NA)
+
+
+test$BYPARED<- replace(test$BYPARED, which(test$BYPARED<0),NA)
+test$BYOCCUM<- replace(test$BYOCCUM, which(test$BYOCCUM<0),NA)
+test$BYOCCUF<- replace(test$BYOCCUF, which(test$BYOCCUF<0),NA)
+test$BYINCOME<- replace(test$BYINCOME, which(test$BYINCOME<0),NA)
+test$BYGRDRPT<- replace(test$BYGRDRPT, which(test$BYGRDRPT<0),NA)
+test$BYLGRRPT<- replace(test$BYLGRRPT, which(test$BYLGRRPT<0),NA)
+test$BYLGRRPT<- replace(test$BYLGRRPT, which(test$BYLGRRPT>97),NA)
+test$BYNONUSG<- replace(test$BYNONUSG, which(test$BYNONUSG<0),NA)
+test$BYSTEXP<- replace(test$BYSTEXP, which(test$BYSTEXP<0),NA)
+test$BYPARASP<- replace(test$BYPARASP, which(test$BYPARASP<0),NA)
+test$BYSCHPRG<- replace(test$BYSCHPRG, which(test$BYSCHPRG<0),NA)
+
+
+test$BYTXACC<- replace(test$BYTXACC, which(test$BYTXACC<0),NA)
+test$BYTXMSTD<- replace(test$BYTXMSTD, which(test$BYTXMSTD<0),NA)
+test$BYTXRSTD<- replace(test$BYTXRSTD, which(test$BYTXRSTD<0),NA)
+test$BYINSTMO<- replace(test$BYINSTMO, which(test$BYINSTMO<=-4),NA)
+test$BYACTCTL<- replace(test$BYACTCTL, which(test$BYACTCTL<=-4),NA)
+test$BYSTPREP<- replace(test$BYSTPREP, which(test$BYSTPREP<=-4),NA)
+test$BYWRTNGA<- replace(test$BYWRTNGA, which(test$BYWRTNGA<=-4),NA)
+test$BYNSPORT<- replace(test$BYNSPORT, which(test$BYNSPORT<0),NA)
+test$BYXTRACU<- replace(test$BYXTRACU, which(test$BYXTRACU<0),NA)
+test$BYHMWRK<- replace(test$BYHMWRK, which(test$BYHMWRK<0),NA)
+test$BYWORKSY<- replace(test$BYWORKSY, which(test$BYWORKSY<0),NA)
+
+
+test$BYWRKHRS<- replace(test$BYWRKHRS, which(test$BYWRKHRS<0),NA)
+test$BYTEHDEG<- replace(test$BYTEHDEG, which(test$BYTEHDEG<0),NA)
+test$BYTMHDEG<- replace(test$BYTMHDEG, which(test$BYTMHDEG<0),NA)
+test$BYSCTRL<- replace(test$BYSCTRL, which(test$BYSCTRL<0),NA)
+test$BYREGION<- replace(test$BYREGION, which(test$BYREGION<0),NA)
+test$BYAPIB<- replace(test$BYAPIB, which(test$BYAPIB=="-9"),NA)
+test$BYERCEMTCH<- replace(test$BYERCEMTCH, which(test$BYERCEMTCH=="-9"),NA)
+test$BYMRCEMTCH<- replace(test$BYMRCEMTCH, which(test$BYMRCEMTCH=="-9"),NA)
+test$BYTVVIGM<- replace(test$BYTVVIGM, which(test$BYTVVIGM<0),NA)
+test$BYTVVIGM<- replace(test$BYTVVIGM, which(test$BYTVVIGM>=99),NA)
+test$BYURBAN<- replace(test$BYURBAN, which(test$BYURBAN<0),NA)
+test$BYGRDRPT<- replace(test$BYGRDRPT, which(test$BYGRDRPT>97),NA)
+test$BYHOMLIT<- replace(test$BYHOMLIT, which(test$BYHOMLIT<0),NA)
+
+```
+
+```{r}
+test$BYERCEMTCH<-droplevels(test$BYERCEMTCH)
+test$BYAPIB<-droplevels(test$BYAPIB)
+test$BYMRCEMTCH<-droplevels(test$BYMRCEMTCH)
+```
+
+
+
+
+```{r}
+colnames(test)
+```
+
+
+```{r}
+test[,c(1:24,31:44)]<-lapply(test[,c(1:24,31:44)],factor)
+str(test)
+summary(test)
+
+```
+
+
+
+```{r}
+attach(test)
+```
+
 
 ```{r, warning=FALSE, message=FALSE}
 ## English score results
 summary(aov(BYTXRSTD~BYSEX))
 summary(aov(BYTXRSTD~BYERCEMTCH))
 summary(aov(BYTXRSTD~BYDOB_P))
-summary(aov(BYTXRSTD~BYPARACE))
 summary(aov(BYTXRSTD~BYFCOMP))
-summary(aov(BYTXRSTD~BYMOTHED))
-summary(aov(BYTXRSTD~BYFATHED))
-summary(aov(BYTXRSTD~BYGPARED))
+summary(aov(BYTXRSTD~BYPARED))
 summary(aov(BYTXRSTD~BYOCCUM))
 summary(aov(BYTXRSTD~BYOCCUF))
 summary(aov(BYTXRSTD~BYINCOME))
@@ -133,10 +211,6 @@ summary(aov(BYTXRSTD~BYSTEXP))
 summary(aov(BYTXRSTD~BYPARASP))
 summary(aov(BYTXRSTD~BYSCHPRG))
 summary(aov(BYTXRSTD~BYTXACC))
-summary(aov(BYTXRSTD~BYINSTMO))
-summary(aov(BYTXRSTD~BYACTCTL))
-summary(aov(BYTXRSTD~BYSTPREP))
-summary(aov(BYTXRSTD~BYWRTNGA))
 summary(aov(BYTXRSTD~BYNSPORT))
 summary(aov(BYTXRSTD~BYXTRACU))
 summary(aov(BYTXRSTD~BYHMWRK))
@@ -180,11 +254,8 @@ summary(aov(BYTXRSTD~BYWRKHRS))
 summary(aov(BYTXMSTD~BYSEX))
 summary(aov(BYTXMSTD~BYMRCEMTCH))
 summary(aov(BYTXMSTD~BYDOB_P))
-summary(aov(BYTXMSTD~BYPARACE))
 summary(aov(BYTXMSTD~BYFCOMP))
-summary(aov(BYTXMSTD~BYMOTHED))
-summary(aov(BYTXMSTD~BYFATHED))
-summary(aov(BYTXMSTD~BYGPARED))
+summary(aov(BYTXMSTD~BYPARED))
 summary(aov(BYTXMSTD~BYOCCUM))
 summary(aov(BYTXMSTD~BYOCCUF))
 summary(aov(BYTXMSTD~BYINCOME))
@@ -194,9 +265,6 @@ summary(aov(BYTXMSTD~BYSTEXP))
 summary(aov(BYTXMSTD~BYPARASP))
 summary(aov(BYTXMSTD~BYSCHPRG))
 summary(aov(BYTXMSTD~BYTXACC))
-summary(aov(BYTXMSTD~BYINSTMO))
-summary(aov(BYTXMSTD~BYACTCTL))
-summary(aov(BYTXMSTD~BYSTPREP))
 summary(aov(BYTXMSTD~BYNSPORT))
 summary(aov(BYTXMSTD~BYXTRACU))
 summary(aov(BYTXMSTD~BYHMWRK))
@@ -236,7 +304,149 @@ summary(aov(BYTXMSTD~BYWRKHRS))
 ```
 
 ```{r}
-colnames(fdata)
+cor.test(BYACTCTL, BYTXMSTD,  method = "pearson")
+cor.test(BYACTCTL, BYTXRSTD,  method = "pearson")
 ```
 
+```{r}
+cor.test(BYINSTMO, BYTXMSTD,  method = "pearson")
+cor.test(BYINSTMO, BYTXRSTD,  method = "pearson")
+```
+
+```{r}
+cor.test(BYSTPREP, BYTXMSTD,  method = "pearson")
+cor.test(BYSTPREP, BYTXRSTD,  method = "pearson")
+```
+
+```{r}
+cor.test(BYWRTNGA, BYTXMSTD,  method = "pearson")
+cor.test(BYWRTNGA, BYTXRSTD,  method = "pearson")
+```
+
+## BYWORKSY, BYLGRRPT
+
+```{r}
+colnames(test)
+datasub8<-test[,-c(6,18,35)]
+colnames(datasub8)
+attach(datasub8)
+```
+
+## chi sqaure separated by type of variable
+
+```{r}
+library(car)
+#langmodm<-lm(BYTXMSTD~BYSTLANG+BYHOMLNG+BYSTLNG2+BYPARLNG+BYPLANG)
+#langmode<-lm(BYTXRSTD~BYSTLANG+BYHOMLNG+BYSTLNG2+BYPARLNG+BYPLANG)
+
+### Choose English Fluency (BYSTLNG2)
+
+chisq.test(table(BYSTLANG,BYHOMLNG))
+chisq.test(table(BYSTLANG,BYSTLNG2))
+chisq.test(table(BYSTLANG,BYPARLNG))
+chisq.test(table(BYSTLANG,BYPLANG))
+chisq.test(table(BYSTLNG2,BYHOMLNG))
+chisq.test(table(BYSTLNG2,BYPARLNG))
+chisq.test(table(BYSTLNG2,BYPLANG))
+chisq.test(table(BYHOMLNG,BYPARLNG))
+chisq.test(table(BYHOMLNG,BYPLANG))
+chisq.test(table(BYPARLNG,BYPLANG))
+```
+
+```{r}
+# Family STructure Chi square
+
+### Keep family structure (fcomp) and sibling number (BYSIBHOM)
+
+chisq.test(table(BYFCOMP,BYSIBSTR))
+chisq.test(table(BYFCOMP,BYSIBHOM))
+chisq.test(table(BYFCOMP,BYGNSTAT))
+chisq.test(table(BYSIBSTR,BYSIBHOM))
+chisq.test(table(BYSIBSTR,BYGNSTAT))
+chisq.test(table(BYSIBHOM,BYGNSTAT))
+```
+
+```{r}
+### Parental stautus (education and job)
+
+### BYPARED and BYINCOME kept (parents highest degree and income)
+
+
+chisq.test(table(BYPARED,BYOCCUM))
+chisq.test(table(BYPARED,BYINCOME))
+chisq.test(table(BYOCCUM,BYINCOME))
+chisq.test(table(BYPARED,BYOCCUF))
+chisq.test(table(BYOCCUF,BYINCOME))
+
+
+
+```
+
+```{r}
+### Education Variables
+
+### Keep BYGRDRPT, BYNONUSG, BYSCHPRG
+
+chisq.test(table(BYGRDRPT,BYNONUSG))
+chisq.test(table(BYGRDRPT,BYHOMLIT))
+chisq.test(table(BYGRDRPT,BYSCHPRG))
+chisq.test(table(BYNONUSG,BYHOMLIT))
+chisq.test(table(BYNONUSG,BYSCHPRG))
+chisq.test(table(BYHOMLIT,BYSCHPRG))
+```
+
+```{r}
+
+### keep BYACTCTL, BYSTPREP, BYWRTNGA (self rated effort, class preparation, writing level by teacher)
+
+cor.test(BYINSTMO, BYACTCTL,  method = "pearson")
+cor.test(BYINSTMO, BYSTPREP,  method = "pearson")
+cor.test(BYINSTMO, BYWRTNGA,  method = "pearson")
+cor.test(BYACTCTL, BYSTPREP,  method = "pearson")
+cor.test(BYACTCTL, BYWRTNGA,  method = "pearson")
+cor.test(BYSTPREP, BYWRTNGA,  method = "pearson")
+```
+
+```{r}
+### Time spent
+
+#### Keep BYHMWRK and BYWRKHRS (Homework hours and WOrk hours)
+
+chisq.test(table(BYNSPORT,BYXTRACU))
+chisq.test(table(BYNSPORT,BYHMWRK))
+chisq.test(table(BYNSPORT,BYTVVIGM))
+chisq.test(table(BYNSPORT,BYWRKHRS))
+chisq.test(table(BYXTRACU,BYHMWRK))
+chisq.test(table(BYXTRACU,BYTVVIGM))
+chisq.test(table(BYXTRACU,BYWRKHRS))
+chisq.test(table(BYHMWRK,BYTVVIGM))
+chisq.test(table(BYHMWRK,BYWRKHRS))
+chisq.test(table(BYTVVIGM,BYWRKHRS))
+```
+
+```{r}
+### Type of School
+chisq.test(table(BYSCTRL,BYURBAN))
+chisq.test(table(BYSCTRL,BYREGION))
+chisq.test(table(BYURBAN,BYREGION))
+```
+
+### Final Variables
+```{r}
+fdata<-datasub8[, c(1,2,3,8, 10, 12, 15, 16, 17, 21, 22, 23, 24, 26, 27, 28, 31, 33,34,35,36,37,38,39,40,41)]
+str(fdata)
+
+```
+
+```{r}
+library(car)
+fdata[,c(1:26)]<-sapply(fdata[,c(1:26)],as.numeric)
+mod1<-lm(BYTXMSTD~BYSEX+BYSTLANG+BYFCOMP+BYSIBHOM+BYPARED+BYINCOME+BYGRDRPT+BYNONUSG+BYSCHPRG+BYTXACC+BYACTCTL+BYSTPREP+BYHMWRK+BYWRKHRS+BYTMHDEG+BYSCTRL+BYURBAN+BYREGION+BYAPIB+BYMRCEMTCH,data = fdata, na.action = na.omit)
+vif(mod1)
+summary(mod1)
+
+mod2<-lm(BYTXRSTD~BYSEX+BYSTLANG+BYFCOMP+BYSIBHOM+BYPARED+BYINCOME+BYGRDRPT+BYNONUSG+BYSCHPRG+BYTXACC+BYACTCTL+BYSTPREP+BYHMWRK+BYWRKHRS+BYTEHDEG+BYSCTRL+BYURBAN+BYREGION+BYAPIB+BYERCEMTCH+BYWRTNGA,data = fdata, na.action = na.omit)
+vif(mod2)
+summary(mod2)
+```
 
