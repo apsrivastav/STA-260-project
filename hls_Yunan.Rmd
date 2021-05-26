@@ -1,0 +1,872 @@
+---
+title: "HLS"
+author: "Sudesh Srivastav"
+date: "5/13/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Download R
+```{r}
+data<-read.csv("hls.csv")
+```
+
+```{r}
+str(data)
+```
+
+```{r}
+### remove restricted
+datasub<- data[sapply(data, function(x) x[1] != -5)]
+str(datasub)
+```
+
+```{r}
+### remove f2 and f3 variables (second and third followups)
+datasub1<-datasub[,-c(4,8:11,212:616,1520:1939)]
+str(datasub1)
+```
+
+
+### Identification Variables
+
+STU_ID (1), STRAT_ID (2), PSU (3), F1UNIV1 (4), F1UNIV2A (5), F1UNIV2B (6), G10COHRT(7),G12COHRT(8), BYSTUWT(9)
+
+### Variables to Keep
+
+BYSEX (10), BYRACE (11), BYDOB_P (15), BYPARACE (16), BYGNSTAT(22), BYMOTHED(24), BYPATHED (25), BYGPARED (26), BYOCCUM (27), BYOCCUF (28), BYNONUSG (36), BYHOMLIT (37), BYRISKFC (38), BYSTEXP (39), BYPARASP(40), BYSCHPRG(43), BYTXSTAT(46), BYTXACC (53), $\bf BYTXMSTD\ (62)$, $\bf BYTXMSTD\ (70)$, BYCONEXP (77), BYINSTMO(78), BYACTCTL(79), BYSTPREP (80), BYWRTNGA (81), BYNSPORT (96), BYXTRACU (97), BYHMWRK (98), BYTVVIGM (99), BYERACE (102), BYTEHDEG (103), BYMRACE (104), BYTMHDEG (105), BYSCTRL (110), BYURBAN (111), BYREGION (112), BY10FLP (116), F1EVERDO (165), $\bf F1TXMSTD (172)$, F1HIMATH (182)
+
+### Variables to keep 1 after analysis analysis
+
+BYSTLANG (12), BYHOMLNG (13),  or BYSTLNG2 (14)
+
+ BYPARLNG (17) or BYPLANG (18)
+
+BYFCOMP (19), BYSIBSTR (20), or BYSIBHOM (21)
+
+BYSES1 (30) or BYSES2 (32)
+
+BYGRDRPT (34) or BYLGRRPT (35)
+
+BYWORKSY (100) or BYWRKHRS (101)
+
+BYS33A (313) and BYS33B (314) (combine)
+
+### Variables to Delete
+
+BYPARED (23), BYSES1QU (31), BYSES2QU (33), BYOCCHS (41), BYOCC30 (42), BYSQSTAT (44), BYQXDATP (45), BYTEQFLG(47), BYPQSTAT (48), BYTXPAFG (49), BYADMFLG(50), BYLMCFLG (51), BYIEPFLG (52), BYTXCSTD (54), BYTXCQU (55), BYNELS2M (56), BYNELS2R (57), BYNELS0M (58), BYPISAME (59), BYPISARE (60), BYTXMIRR (61), BYTXMQU (63), BYTX1MPP (64), BYTX2MPP (65), BYTX3MPP (66), BYTX4MPP (67), BYTX5MPP (68), BYTXRIRR (69), BYTXRQU (71), BYTX1RPP (72), BYTX2RPP (73), BYTX3RPP (74), BYMATHSE (75), BYENGLSE (76), BYSF1RCE (82), BYSF2RCE (83), BYSF3RCE (84), BYFRRACE (85), BYFRGRIM (86), BYBASEBL (87), BYSOFTBL (88), BYBSKTBL (89), BYFOOTBL (90), BYSOCCER (91), BYTEAMSP (92), BYSOLOSP (93), BYCHRDRL (94), BYTEAQUA (106), BYTSTREL (107), BYG10EP (108), BYSCENP (109), BYREGURB (113), BYREGCTL(114), BYSPANP (115), BYSCSAF1 (117), BYSCSAF2(118), BYACCLIM (119), BYSEXIM (120), BYSTLNIM (121), BYFCMPIM (122), BYMOEDIM (123), BYFAEDIM (124), BYOCCMIM (125), BYOCCFIM (126), BYINCMIM (127), BYSTEXIM (128), BYPASPIM (129), BYSCHPIM (130), BYTESTIM (131), BYMATHIM (132), BYREADIM (133) F1QWT (134), F1PNLWT (135), F1SEX (136), F1RACE (137), F1STLANG (138), F1HOMLNG (139), F1DOB_P  (140), F1FCOMP (141), F1PARED (142),  F1MOTHED (143), F1FATHED (144), F1OCCUM (145), F1OCCUF  (146), F1SES1 (147), F1SES1QU (148), F1SES2 (149), F1SES2QU (150), F1STEXP (151),F1BYEDEX (152), F1OCCHS (153), F1OCC30 (154), F1QSTAT (155), F1TSTAT (156), F1PNLFLG (157), F1BYTFLG (158), F1QMODE (159), F1STQFLG (160), F1TRQFLG (161), F1HOQFLG (162), F1EGQFLG (163), F1DOQFLG (164), F1DOSTAT (166),  F1TXACC (167), F1CTLPTN (168), F1GRADE (169), F1TXMBIR (170), F1TXM1IR (171), F1TXMQU (173), F1NELS2M (174), F1TX1MPP (175), F1TX2MPP (176), F1TX3MPP (177), F1TX4MPP (178), F1TX5MPP (179), F1BYMTGN (180), F1QXDATP (181), Variables 183- 312, 315-2254        
+###### 
+
+```{r}
+### eliminating variables
+datasub2<-datasub1[,-c(31,33,41,42,44,45,47,48:52,54:61,63:69,71:76,82:94, 106:109,113:115,117:164, 166:171,173:181, 183:312,315:2254)]
+str(datasub2)
+```
+
+
+
+```{r}
+datasub3<- datasub2[,-c(2,3,4:6,8,9, 30:31,36,40,44,49, 63:66) ]
+str(datasub3)
+```
+
+```{r,message=FALSE,warning=FALSE}
+library(dplyr)
+datasub4<- mutate(datasub3, BYAPIB = ifelse(as.factor(BYS33A)==c("-9","-8","-7","-6","-4")|as.factor(BYS33B)==c("-9","-8","-7","-6","-4"),"-9",ifelse(as.factor(BYS33A)=="1"|as.factor(BYS33B)=="1", "1","0")))
+datasub4$BYAPIB<-as.factor(datasub4$BYAPIB)
+summary(datasub4$BYAPIB)
+```
+
+```{r,message=FALSE,warning=FALSE}
+library(plyr)
+datasub4$BYERACE<-revalue(as.factor(datasub4$BYERACE), c("-9"="-8"))
+summary(datasub4$BYERACE)
+datasub5<- mutate(datasub4, BYERCEMTCH = ifelse(as.factor(BYRACE)==c("-8","-4")|BYERACE==c("-8","-4"),"-9",ifelse(as.factor(BYRACE)==BYERACE, "1","0")))
+datasub5$BYERCEMTCH<-as.factor(datasub5$BYERCEMTCH)
+summary(datasub5$BYERCEMTCH)
+```
+
+
+
+```{r, message=FALSE, warning=FALSE}
+library(plyr)
+datasub5$BYMRACE<-revalue(as.factor(datasub5$BYMRACE), c("-9"="-8"))
+summary(datasub5$BYMRACE)
+datasub6<- mutate(datasub5, BYMRCEMTCH = ifelse(as.factor(BYRACE)==c("-8","-4")|BYMRACE==c("-8","-4"),"-9",ifelse(as.factor(BYRACE)==BYMRACE, "1","0")))
+datasub6$BYMRCEMTCH<-as.factor(datasub6$BYMRCEMTCH)
+summary(datasub6$BYMRCEMTCH)
+```
+
+```{r}
+colnames(datasub6)
+```
+
+
+```{r}
+datasub7<-datasub6[,-c(4,43,45,50,51)]
+colnames(datasub7)
+test<-datasub7[,-c(2,8,16:18)]
+```
+
+```{r}
+test$BYSEX<- replace(test$BYSEX, which(test$BYSEX<0),NA)
+test$BYSTLANG<- replace(test$BYSTLANG, which(test$BYSTLANG<0),NA)
+test$BYHOMLNG<- replace(test$BYHOMLNG, which(test$BYHOMLNG<0),NA)
+test$BYSTLNG2<- replace(test$BYSTLNG2, which(test$BYSTLNG2<0),NA)
+test$BYDOB_P<- replace(test$BYDOB_P, which(test$BYDOB_P<0),NA)
+test$BYPARLNG<- replace(test$BYPARLNG, which(test$BYPARLNG<0),NA)
+test$BYPLANG<- replace(test$BYPLANG, which(test$BYPLANG<0),NA)
+test$BYFCOMP<- replace(test$BYFCOMP, which(test$BYFCOMP<0),NA)
+test$BYSIBSTR<- replace(test$BYSIBSTR, which(test$BYSIBSTR<0),NA)
+test$BYSIBHOM<- replace(test$BYSIBHOM, which(test$BYSIBHOM<0),NA)
+test$BYGNSTAT<- replace(test$BYGNSTAT, which(test$BYGNSTAT<0),NA)
+
+
+test$BYPARED<- replace(test$BYPARED, which(test$BYPARED<0),NA)
+test$BYOCCUM<- replace(test$BYOCCUM, which(test$BYOCCUM<0),NA)
+test$BYOCCUF<- replace(test$BYOCCUF, which(test$BYOCCUF<0),NA)
+test$BYINCOME<- replace(test$BYINCOME, which(test$BYINCOME<0),NA)
+test$BYGRDRPT<- replace(test$BYGRDRPT, which(test$BYGRDRPT<0),NA)
+test$BYLGRRPT<- replace(test$BYLGRRPT, which(test$BYLGRRPT<0),NA)
+test$BYLGRRPT<- replace(test$BYLGRRPT, which(test$BYLGRRPT>97),NA)
+test$BYNONUSG<- replace(test$BYNONUSG, which(test$BYNONUSG<0),NA)
+test$BYSTEXP<- replace(test$BYSTEXP, which(test$BYSTEXP<0),NA)
+test$BYPARASP<- replace(test$BYPARASP, which(test$BYPARASP<0),NA)
+test$BYSCHPRG<- replace(test$BYSCHPRG, which(test$BYSCHPRG<0),NA)
+
+
+test$BYTXACC<- replace(test$BYTXACC, which(test$BYTXACC<0),NA)
+test$BYTXMSTD<- replace(test$BYTXMSTD, which(test$BYTXMSTD<0),NA)
+test$BYTXRSTD<- replace(test$BYTXRSTD, which(test$BYTXRSTD<0),NA)
+test$BYINSTMO<- replace(test$BYINSTMO, which(test$BYINSTMO<=-4),NA)
+test$BYACTCTL<- replace(test$BYACTCTL, which(test$BYACTCTL<=-4),NA)
+test$BYSTPREP<- replace(test$BYSTPREP, which(test$BYSTPREP<=-4),NA)
+test$BYWRTNGA<- replace(test$BYWRTNGA, which(test$BYWRTNGA<=-4),NA)
+test$BYNSPORT<- replace(test$BYNSPORT, which(test$BYNSPORT<0),NA)
+test$BYXTRACU<- replace(test$BYXTRACU, which(test$BYXTRACU<0),NA)
+test$BYHMWRK<- replace(test$BYHMWRK, which(test$BYHMWRK<0),NA)
+test$BYWORKSY<- replace(test$BYWORKSY, which(test$BYWORKSY<0),NA)
+
+
+test$BYWRKHRS<- replace(test$BYWRKHRS, which(test$BYWRKHRS<0),NA)
+test$BYTEHDEG<- replace(test$BYTEHDEG, which(test$BYTEHDEG<0),NA)
+test$BYTMHDEG<- replace(test$BYTMHDEG, which(test$BYTMHDEG<0),NA)
+test$BYSCTRL<- replace(test$BYSCTRL, which(test$BYSCTRL<0),NA)
+test$BYREGION<- replace(test$BYREGION, which(test$BYREGION<0),NA)
+test$BYAPIB<- replace(test$BYAPIB, which(test$BYAPIB=="-9"),NA)
+test$BYERCEMTCH<- replace(test$BYERCEMTCH, which(test$BYERCEMTCH=="-9"),NA)
+test$BYMRCEMTCH<- replace(test$BYMRCEMTCH, which(test$BYMRCEMTCH=="-9"),NA)
+test$BYTVVIGM<- replace(test$BYTVVIGM, which(test$BYTVVIGM<0),NA)
+test$BYTVVIGM<- replace(test$BYTVVIGM, which(test$BYTVVIGM>=99),NA)
+test$BYURBAN<- replace(test$BYURBAN, which(test$BYURBAN<0),NA)
+test$BYGRDRPT<- replace(test$BYGRDRPT, which(test$BYGRDRPT>97),NA)
+test$BYHOMLIT<- replace(test$BYHOMLIT, which(test$BYHOMLIT<0),NA)
+
+```
+
+```{r}
+test$BYERCEMTCH<-droplevels(test$BYERCEMTCH)
+test$BYAPIB<-droplevels(test$BYAPIB)
+test$BYMRCEMTCH<-droplevels(test$BYMRCEMTCH)
+```
+
+
+
+
+```{r}
+colnames(test)
+```
+
+
+```{r}
+test[,c(1:24,31:44)]<-lapply(test[,c(1:24,31:44)],factor)
+str(test)
+summary(test)
+
+```
+
+
+
+```{r}
+attach(test)
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+## English score results
+summary(aov(BYTXRSTD~BYSEX))
+summary(aov(BYTXRSTD~BYERCEMTCH))
+summary(aov(BYTXRSTD~BYDOB_P))
+summary(aov(BYTXRSTD~BYFCOMP))
+summary(aov(BYTXRSTD~BYPARED))
+summary(aov(BYTXRSTD~BYOCCUM))
+summary(aov(BYTXRSTD~BYOCCUF))
+summary(aov(BYTXRSTD~BYINCOME))
+summary(aov(BYTXRSTD~BYNONUSG))
+summary(aov(BYTXRSTD~BYHOMLIT))
+summary(aov(BYTXRSTD~BYSTEXP))
+summary(aov(BYTXRSTD~BYPARASP))
+summary(aov(BYTXRSTD~BYSCHPRG))
+summary(aov(BYTXRSTD~BYTXACC))
+summary(aov(BYTXRSTD~BYNSPORT))
+summary(aov(BYTXRSTD~BYXTRACU))
+summary(aov(BYTXRSTD~BYHMWRK))
+summary(aov(BYTXRSTD~BYTVVIGM))
+summary(aov(BYTXRSTD~BYTEHDEG))
+summary(aov(BYTXRSTD~BYSCTRL))
+summary(aov(BYTXRSTD~BYURBAN))
+summary(aov(BYTXRSTD~BYREGION))
+summary(aov(BYTXRSTD~BYAPIB))
+```
+
+```{r}
+summary(aov(BYTXRSTD~BYSTLANG))
+summary(aov(BYTXRSTD~BYHOMLNG))
+summary(aov(BYTXRSTD~BYSTLNG2))
+```
+
+```{r}
+summary(aov(BYTXRSTD~BYPARLNG))
+summary(aov(BYTXRSTD~BYPLANG))
+```
+
+```{r}
+summary(aov(BYTXRSTD~BYSIBSTR))
+summary(aov(BYTXRSTD~BYSIBHOM))
+```
+
+```{r}
+summary(aov(BYTXRSTD~BYGRDRPT))
+summary(aov(BYTXRSTD~BYLGRRPT))
+```
+
+```{r}
+summary(aov(BYTXRSTD~BYWORKSY))
+summary(aov(BYTXRSTD~BYWRKHRS))
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+## MATH score results
+summary(aov(BYTXMSTD~BYSEX))
+summary(aov(BYTXMSTD~BYMRCEMTCH))
+summary(aov(BYTXMSTD~BYDOB_P))
+summary(aov(BYTXMSTD~BYFCOMP))
+summary(aov(BYTXMSTD~BYPARED))
+summary(aov(BYTXMSTD~BYOCCUM))
+summary(aov(BYTXMSTD~BYOCCUF))
+summary(aov(BYTXMSTD~BYINCOME))
+summary(aov(BYTXMSTD~BYNONUSG))
+summary(aov(BYTXMSTD~BYHOMLIT))
+summary(aov(BYTXMSTD~BYSTEXP))
+summary(aov(BYTXMSTD~BYPARASP))
+summary(aov(BYTXMSTD~BYSCHPRG))
+summary(aov(BYTXMSTD~BYTXACC))
+summary(aov(BYTXMSTD~BYNSPORT))
+summary(aov(BYTXMSTD~BYXTRACU))
+summary(aov(BYTXMSTD~BYHMWRK))
+summary(aov(BYTXMSTD~BYTVVIGM))
+summary(aov(BYTXMSTD~BYTMHDEG))
+summary(aov(BYTXMSTD~BYSCTRL))
+summary(aov(BYTXMSTD~BYURBAN))
+summary(aov(BYTXMSTD~BYREGION))
+summary(aov(BYTXMSTD~BYAPIB))
+
+```
+
+```{r}
+summary(aov(BYTXMSTD~BYSTLANG))
+summary(aov(BYTXMSTD~BYHOMLNG))
+summary(aov(BYTXMSTD~BYSTLNG2))
+```
+
+```{r}
+summary(aov(BYTXMSTD~BYPARLNG))
+summary(aov(BYTXMSTD~BYPLANG))
+```
+
+```{r}
+summary(aov(BYTXMSTD~BYSIBSTR))
+summary(aov(BYTXMSTD~BYSIBHOM))
+```
+
+```{r}
+summary(aov(BYTXMSTD~BYGRDRPT))
+summary(aov(BYTXMSTD~BYLGRRPT))
+```
+
+```{r}
+summary(aov(BYTXMSTD~BYWORKSY))
+summary(aov(BYTXMSTD~BYWRKHRS))
+```
+
+```{r}
+cor.test(BYACTCTL, BYTXMSTD,  method = "pearson")
+cor.test(BYACTCTL, BYTXRSTD,  method = "pearson")
+```
+
+```{r}
+cor.test(BYINSTMO, BYTXMSTD,  method = "pearson")
+cor.test(BYINSTMO, BYTXRSTD,  method = "pearson")
+```
+
+```{r}
+cor.test(BYSTPREP, BYTXMSTD,  method = "pearson")
+cor.test(BYSTPREP, BYTXRSTD,  method = "pearson")
+```
+
+```{r}
+cor.test(BYWRTNGA, BYTXMSTD,  method = "pearson")
+cor.test(BYWRTNGA, BYTXRSTD,  method = "pearson")
+```
+
+## BYWORKSY, BYLGRRPT
+
+```{r}
+colnames(test)
+datasub8<-test[,-c(6,18,35)]
+colnames(datasub8)
+attach(datasub8)
+```
+
+## chi sqaure separated by type of variable
+
+```{r}
+library(car)
+#langmodm<-lm(BYTXMSTD~BYSTLANG+BYHOMLNG+BYSTLNG2+BYPARLNG+BYPLANG)
+#langmode<-lm(BYTXRSTD~BYSTLANG+BYHOMLNG+BYSTLNG2+BYPARLNG+BYPLANG)
+
+### Choose English Fluency (BYSTLNG2)
+
+chisq.test(table(BYSTLANG,BYHOMLNG))
+chisq.test(table(BYSTLANG,BYSTLNG2))
+chisq.test(table(BYSTLANG,BYPARLNG))
+chisq.test(table(BYSTLANG,BYPLANG))
+chisq.test(table(BYSTLNG2,BYHOMLNG))
+chisq.test(table(BYSTLNG2,BYPARLNG))
+chisq.test(table(BYSTLNG2,BYPLANG))
+chisq.test(table(BYHOMLNG,BYPARLNG))
+chisq.test(table(BYHOMLNG,BYPLANG))
+chisq.test(table(BYPARLNG,BYPLANG))
+```
+
+```{r}
+# Family STructure Chi square
+
+### Keep family structure (fcomp) and sibling number (BYSIBHOM)
+
+chisq.test(table(BYFCOMP,BYSIBSTR))
+chisq.test(table(BYFCOMP,BYSIBHOM))
+chisq.test(table(BYFCOMP,BYGNSTAT))
+chisq.test(table(BYSIBSTR,BYSIBHOM))
+chisq.test(table(BYSIBSTR,BYGNSTAT))
+chisq.test(table(BYSIBHOM,BYGNSTAT))
+```
+
+```{r}
+### Parental stautus (education and job)
+
+### BYPARED and BYINCOME kept (parents highest degree and income)
+
+
+chisq.test(table(BYPARED,BYOCCUM))
+chisq.test(table(BYPARED,BYINCOME))
+chisq.test(table(BYOCCUM,BYINCOME))
+chisq.test(table(BYPARED,BYOCCUF))
+chisq.test(table(BYOCCUF,BYINCOME))
+
+
+
+```
+
+```{r}
+### Education Variables
+
+### Keep BYGRDRPT, BYNONUSG, BYSCHPRG
+
+chisq.test(table(BYGRDRPT,BYNONUSG))
+chisq.test(table(BYGRDRPT,BYHOMLIT))
+chisq.test(table(BYGRDRPT,BYSCHPRG))
+chisq.test(table(BYNONUSG,BYHOMLIT))
+chisq.test(table(BYNONUSG,BYSCHPRG))
+chisq.test(table(BYHOMLIT,BYSCHPRG))
+```
+
+```{r}
+
+### keep BYACTCTL, BYSTPREP, BYWRTNGA (self rated effort, class preparation, writing level by teacher)
+
+cor.test(BYINSTMO, BYACTCTL,  method = "pearson")
+cor.test(BYINSTMO, BYSTPREP,  method = "pearson")
+cor.test(BYINSTMO, BYWRTNGA,  method = "pearson")
+cor.test(BYACTCTL, BYSTPREP,  method = "pearson")
+cor.test(BYACTCTL, BYWRTNGA,  method = "pearson")
+cor.test(BYSTPREP, BYWRTNGA,  method = "pearson")
+```
+
+```{r}
+### Time spent
+
+#### Keep BYHMWRK and BYWRKHRS (Homework hours and WOrk hours)
+
+chisq.test(table(BYNSPORT,BYXTRACU))
+chisq.test(table(BYNSPORT,BYHMWRK))
+chisq.test(table(BYNSPORT,BYTVVIGM))
+chisq.test(table(BYNSPORT,BYWRKHRS))
+chisq.test(table(BYXTRACU,BYHMWRK))
+chisq.test(table(BYXTRACU,BYTVVIGM))
+chisq.test(table(BYXTRACU,BYWRKHRS))
+chisq.test(table(BYHMWRK,BYTVVIGM))
+chisq.test(table(BYHMWRK,BYWRKHRS))
+chisq.test(table(BYTVVIGM,BYWRKHRS))
+```
+
+```{r}
+### Type of School
+chisq.test(table(BYSCTRL,BYURBAN))
+chisq.test(table(BYSCTRL,BYREGION))
+chisq.test(table(BYURBAN,BYREGION))
+```
+
+### Final Variables
+```{r}
+fdata<-datasub8[, c(1,2,3,8, 10, 12, 15, 16, 17, 21, 22, 23, 24, 26, 27, 28, 31, 33,34,35,36,37,38,39,40,41)]
+str(fdata)
+
+```
+###  the distribution plots for each of the variables 
+
+```{r BYSEX}
+library(ggplot2)
+
+#math
+ggplot(fdata, aes(x = factor(BYSEX), y = BYTXMSTD  , fill = factor(BYSEX))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Pastel2")
+
+fdata$BYSEX = factor(fdata$BYSEX)
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYSEX )) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYSEX), y = BYTXRSTD    , fill = factor(BYSEX))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Pastel2")
+
+fdata$BYSEX = factor(fdata$BYSEX)
+ggplot(fdata, aes(x = BYTXRSTD  , fill =BYSEX )) +
+  geom_density(alpha = 0.3)
+
+#different gender students' math and read performance are alike.
+```
+```{r BYSTLANG}
+#math
+ggplot(fdata, aes(x = factor(BYSTLANG), y = BYTXMSTD  , fill = factor(BYSTLANG  ))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Pastel2")
+
+fdata$BYSTLANG = factor(fdata$BYSTLANG)
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYSTLANG )) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYSTLANG), y = BYTXRSTD    , fill = factor(BYSTLANG))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Pastel2")
+
+ggplot(fdata, aes(x = BYTXRSTD  , fill =BYSTLANG )) +
+  geom_density(alpha = 0.3)
+
+#English native students tend to have better math and read score, especially reading
+```
+```{r BYFCOMP}
+#math
+ggplot(fdata, aes(x = factor(BYFCOMP), y = BYTXMSTD  , fill = factor(BYFCOMP))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+fdata$BYFCOMP= factor(fdata$BYFCOMP)
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYFCOMP)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYFCOMP), y = BYTXRSTD, fill = factor(BYFCOMP))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYFCOMP )) +
+  geom_density(alpha = 0.3)
+
+#students have both mother and father tend to have better math and read score
+#student from a Father only family have better m&r score compare to other untraditational family
+```
+```{r BYSIBHOM}
+#math
+ggplot(fdata, aes(x = factor(BYSIBHOM), y = BYTXMSTD  , fill = factor(BYSIBHOM))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+fdata$BYSIBHOM= factor(fdata$BYSIBHOM  )
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYSIBHOM)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYSIBHOM), y = BYTXRSTD, fill = factor(BYSIBHOM))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYSIBHOM )) +
+  geom_density(alpha = 0.3)
+
+#students with 0-2 siblings tend to have better math and read score
+# for students with more than siblings,siblings number seems have negtive relation with m&r grade 
+```
+```{r BYPARED   }
+#math
+ggplot(fdata, aes(x = factor(BYPARED), y = BYTXMSTD  , fill = factor(BYPARED))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+fdata$BYPARED= factor(fdata$BYPARED  )
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYPARED)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYPARED), y = BYTXRSTD, fill = factor(BYPARED))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYPARED )) +
+  geom_density(alpha = 0.3)
+
+#Parents’ educational level is very likely to be related to their children’s grades
+
+```
+```{r BYINCOME}
+#math
+ggplot(fdata, aes(x = factor(BYINCOME), y = BYTXMSTD  , fill = factor(BYINCOME))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+fdata$BYINCOME= factor(fdata$BYINCOME  )
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYINCOME)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYINCOME), y = BYTXRSTD, fill = factor(BYINCOME))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYINCOME )) +
+  geom_density(alpha = 0.3)
+
+#Total family income is very likely to be related to their children’s grades
+
+```
+```{r BYGRDRPT  }
+#math
+ggplot(fdata, aes(x = factor(BYGRDRPT), y = BYTXMSTD  , fill = factor(BYGRDRPT))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+fdata$BYGRDRPT= factor(fdata$BYGRDRPT  )
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYGRDRPT)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYGRDRPT), y = BYTXRSTD, fill = factor(BYGRDRPT))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYGRDRPT )) +
+  geom_density(alpha = 0.3)
+
+#the number of grades in which the sample member was held back between Kindergarten and 10th grade.
+
+#Previous education experience is related to grade 12 grades, students who repeat less tend to have higher grades
+
+```
+
+```{r BYNONUSG  }
+#math
+ggplot(fdata, aes(x = factor(BYNONUSG), y = BYTXMSTD  , fill = factor(BYNONUSG))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+fdata$BYNONUSG= factor(fdata$BYNONUSG  )
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYNONUSG)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYNONUSG), y = BYTXRSTD, fill = factor(BYNONUSG))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYNONUSG )) +
+  geom_density(alpha = 0.3)
+
+#Number of grades completed outside U.S. (K-10) 
+#kids spend 8-10 grades outsides may have difficulty adapting to the new environment, which affects overall grades
+
+```
+```{r BYSCHPRG}
+#math
+ggplot(fdata, aes(x = factor(BYSCHPRG), y = BYTXMSTD  , fill = factor(BYSCHPRG))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+fdata$BYSCHPRG= factor(fdata$BYSCHPRG  )
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYSCHPRG)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYSCHPRG), y = BYTXRSTD, fill = factor(BYSCHPRG))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYSCHPRG )) +
+  geom_density(alpha = 0.3)
+
+#Category	  Label            
+#1	        General
+#2	        College preparatory-academic
+#3         	Vocational-including technical/business
+#-8	        Survey component legitimate skip/NA
+	
+# I am not familiar with this variable
+# seems College preparatory-academic programe can help students get better score 
+# or only the students in good study condition can be included in the College preparatory-academic programe
+```
+```{r BYTXACC}
+#math
+ggplot(fdata, aes(x = factor(BYTXACC), y = BYTXMSTD  , fill = factor(BYTXACC))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+fdata$BYTXACC= factor(fdata$BYTXACC  )
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYTXACC)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYTXACC), y = BYTXRSTD, fill = factor(BYTXACC))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYTXACC )) +
+  geom_density(alpha = 0.3)
+
+#students who need Extra time or other test accommodations are less likely to get a better score. 
+# I am not familiar with this variable too in what situation students can ask for Extra time or other test accommodations?
+
+```
+```{r BYWRKHRS}
+#math
+ggplot(fdata, aes(x = factor(BYWRKHRS), y = BYTXMSTD  , fill = factor(BYWRKHRS))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+fdata$BYWRKHRS= factor(fdata$BYWRKHRS  )
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYWRKHRS)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYWRKHRS), y = BYTXRSTD, fill = factor(BYWRKHRS))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYWRKHRS )) +
+  geom_density(alpha = 0.3)
+
+#BY hours worked per week during 01-02 school year 
+# 1-5 hours a week is a good pratice
+# more than 26 hours a week will be a heavy burden
+
+
+```
+```{r BYTEHDEG}
+
+fdata$BYTEHDEG= factor(fdata$BYTEHDEG  )
+#read
+ggplot(fdata, aes(x = factor(BYTEHDEG), y = BYTXRSTD, fill = factor(BYTEHDEG))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYTEHDEG )) +
+  geom_density(alpha = 0.3)
+
+#Highest degree earned by the English teacher
+# No Degree and Associate degree (A.A., A.S., etc.) is quite rare
+# higher the Degree higher the read score
+
+
+```
+```{r BYTMHDEG    }
+#math
+ggplot(fdata, aes(x = factor(BYTMHDEG), y = BYTXMSTD  , fill = factor(BYTMHDEG))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+fdata$BYTMHDEG= factor(fdata$BYTMHDEG  )
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYTMHDEG)) +
+  geom_density(alpha = 0.3)
+
+#Highest degree earned by the math teacher
+# No Degree and Associate degree (A.A., A.S., etc.) is quite rare,too
+# no clear pattern between teacher's Degree vs student's math score
+
+
+```
+```{r BYSCTRL}
+#math
+ggplot(fdata, aes(x = factor(BYSCTRL), y = BYTXMSTD  , fill = factor(BYSCTRL))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+fdata$BYSCTRL= factor(fdata$BYSCTRL  )
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYSCTRL)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYSCTRL), y = BYTXRSTD, fill = factor(BYSCTRL))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYSCTRL )) +
+  geom_density(alpha = 0.3)
+
+#Public, Catholic, or Other Private School 
+#Public school performance is generally worse than the others
+```
+```{r BYURBAN}
+#math
+i= BYURBAN
+fdata$BYURBAN= factor(fdata$BYURBAN)
+ggplot(fdata, aes(x = factor(i), y = BYTXMSTD  , fill = factor(i))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXMSTD, fill =i)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(i), y = BYTXRSTD, fill = factor(i))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =i )) +
+  geom_density(alpha = 0.3)
+
+#Urbanicity of school locale 
+#different school local with alike math and read performance
+```
+```{r BYREGION  }
+#math
+
+fdata$BYREGION= factor(fdata$BYREGION)
+
+ggplot(fdata, aes(x = factor(BYREGION), y = BYTXMSTD  , fill = factor(BYREGION))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYREGION)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYREGION), y = BYTXRSTD, fill = factor(BYREGION))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYREGION )) +
+  geom_density(alpha = 0.3)
+
+#1 Northeast 2 Midwest 3 South 4 West
+#different Geographic region school with alike math and read performance
+# Northeast school has a weak advantage
+```
+```{r BYAPIB}
+#math
+
+fdata$BYAPIB= factor(fdata$BYAPIB)
+
+ggplot(fdata, aes(x = factor(BYAPIB), y = BYTXMSTD  , fill = factor(BYAPIB))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYAPIB)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYAPIB), y = BYTXRSTD, fill = factor(BYAPIB))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYAPIB )) +
+  geom_density(alpha = 0.3)
+
+# Ever in Advanced Placement program
+# I am not familiar with this variable
+# seems Advanced Placement program are like College preparatory-academic programe, can help students get better score 
+# or only the students in good study condition can be included in the Advanced Placement program?
+```
+```{r BYERCEMTCH}
+#math
+
+fdata$BYERCEMTCH= factor(fdata$BYERCEMTCH)
+
+ggplot(fdata, aes(x = factor(BYERCEMTCH), y = BYTXMSTD  , fill = factor(BYERCEMTCH))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYERCEMTCH)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYERCEMTCH), y = BYTXRSTD, fill = factor(BYERCEMTCH))) +
+  geom_boxplot() +
+  scale_fill_brewer(palette = "Spectral")
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYERCEMTCH )) +
+  geom_density(alpha = 0.3)
+
+# race of student
+
+```
+ 
+```{r BYHMWRK}
+#math
+
+fdata$BYHMWRK= factor(fdata$BYHMWRK)
+
+ggplot(fdata, aes(x = factor(BYHMWRK), y = BYTXMSTD  , fill = factor(BYHMWRK))) +
+  geom_boxplot() 
+
+ggplot(fdata, aes(x = BYTXMSTD, fill =BYHMWRK)) +
+  geom_density(alpha = 0.3)
+
+#read
+ggplot(fdata, aes(x = factor(BYHMWRK), y = BYTXRSTD, fill = factor(BYHMWRK))) +
+  geom_boxplot() 
+
+ggplot(fdata, aes(x = BYTXRSTD, fill =BYHMWRK )) +
+  geom_density(alpha = 0.3)
+
+# BY hours per week spent on homework (in and out of school)
+# one week has 168 hours
+# spent 99 hours on homework??? poor kids or poor data
+```
+
+```{r}
+library(car)
+fdata[,c(1:26)]<-sapply(fdata[,c(1:26)],as.numeric)
+mod1<-lm(BYTXMSTD~BYSEX+BYSTLANG+BYFCOMP+BYSIBHOM+BYPARED+BYINCOME+BYGRDRPT+BYNONUSG+BYSCHPRG+BYTXACC+BYACTCTL+BYSTPREP+BYHMWRK+BYWRKHRS+BYTMHDEG+BYSCTRL+BYURBAN+BYREGION+BYAPIB+BYMRCEMTCH,data = fdata, na.action = na.omit)
+vif(mod1)
+summary(mod1)
+
+mod2<-lm(BYTXRSTD~BYSEX+BYSTLANG+BYFCOMP+BYSIBHOM+BYPARED+BYINCOME+BYGRDRPT+BYNONUSG+BYSCHPRG+BYTXACC+BYACTCTL+BYSTPREP+BYHMWRK+BYWRKHRS+BYTEHDEG+BYSCTRL+BYURBAN+BYREGION+BYAPIB+BYERCEMTCH+BYWRTNGA,data = fdata, na.action = na.omit)
+vif(mod2)
+summary(mod2)
+```
+
