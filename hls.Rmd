@@ -21,13 +21,13 @@ str(data)
 ```{r}
 ### remove restrivted
 datasub<- data[sapply(data, function(x) x[1] != -5)]
-str(datasub)
+colnames(datasub)
 ```
 
 ```{r}
 ### remove f2 and f3 variables (second and third followups)
 datasub1<-datasub[,-c(4,8:11,212:616,1520:1939)]
-str(datasub1)
+colnames(datasub1)
 ```
 
 
@@ -62,7 +62,7 @@ BYPARED (23), BYSES1QU (31), BYSES2QU (33), BYOCCHS (41), BYOCC30 (42), BYSQSTAT
 
 ```{r}
 ### eliminating variables
-datasub2<-datasub1[,-c(31,33,41,42,44,45,47,48:52,54:61,63:69,71:76,82:94, 106:109,113:115,117:164, 166:171,173:181, 183:312,315:2254)]
+datasub2<-datasub1[,-c(31,33,41,42,44,45,47,48:52,54:61,63:69,71:76,82:94, 106:109,113:115,117:164, 166:171,173:181, 183:312,315:1394, 1396:1481, 1483:2254)]
 str(datasub2)
 ```
 
@@ -101,18 +101,42 @@ summary(datasub6$BYMRCEMTCH)
 ```
 
 ```{r}
-colnames(datasub6)
+library(plyr)
+datasub6$BYTE22<-revalue(as.factor(datasub6$BYTE22), c("-9"="-8"))
+summary(datasub6$BYTE22)
+datasub7<- mutate(datasub6, BYESEXMTCH = ifelse(as.factor(BYSEX)==c("-8","-4")|BYTE22==c("-8","-4"),"-9",ifelse(as.factor(BYSEX)==as.factor(BYTE22), "1","0")))
+datasub7$BYESEXMTCH<-as.factor(datasub7$BYESEXMTCH)
+summary(datasub7$BYESEXMTCH)
+```
+
+```{r}
+library(plyr)
+datasub7$BYTM22<-revalue(as.factor(datasub7$BYTM22), c("-9"="-8"))
+summary(datasub7$BYTM22)
+datasub8<- mutate(datasub7, BYMSEXMTCH = ifelse(as.factor(BYSEX)==c("-8","-4")|BYTM22==c("-8","-4"),"-9",ifelse(as.factor(BYSEX)==as.factor(BYTM22), "1","0")))
+datasub8$BYMSEXMTCH<-as.factor(datasub8$BYMSEXMTCH)
+summary(datasub8$BYMSEXMTCH)
+```
+
+
+
+
+```{r}
+colnames(datasub8)
 ```
 
 
 ```{r}
-datasub7<-datasub6[,-c(4,43,45,50,51)]
-colnames(datasub7)
-test<-datasub7[,-c(2,8,16:18)]
+datasub9<-datasub8[,-c(3,4,43,45,50,51,52,53)]
+colnames(datasub9)
+test<-datasub9[,-c(2,7,15:17)]
 ```
 
 ```{r}
-test$BYSEX<- replace(test$BYSEX, which(test$BYSEX<0),NA)
+test$BYESEXMTCH<- replace(test$BYESEXMTCH, which(test$BYESEXMTCH=="-9"),NA)
+test$BYMSEXMTCH<- replace(test$BYMSEXMTCH, which(test$BYMSEXMTCH=="-9"),NA)
+test$BYERCEMTCH<- replace(test$BYERCEMTCH, which(test$BYERCEMTCH=="-9"),NA)
+test$BYMRCEMTCH<- replace(test$BYMRCEMTCH, which(test$BYMRCEMTCH=="-9"),NA)
 test$BYSTLANG<- replace(test$BYSTLANG, which(test$BYSTLANG<0),NA)
 test$BYHOMLNG<- replace(test$BYHOMLNG, which(test$BYHOMLNG<0),NA)
 test$BYSTLNG2<- replace(test$BYSTLNG2, which(test$BYSTLNG2<0),NA)
@@ -171,6 +195,11 @@ test$BYHOMLIT<- replace(test$BYHOMLIT, which(test$BYHOMLIT<0),NA)
 test$BYERCEMTCH<-droplevels(test$BYERCEMTCH)
 test$BYAPIB<-droplevels(test$BYAPIB)
 test$BYMRCEMTCH<-droplevels(test$BYMRCEMTCH)
+test$BYESEXMTCH<-droplevels(test$BYESEXMTCH)
+summary(test$BYESEXMATCH)
+test$BYMSEXMTCH<-droplevels(test$BYMSEXMTCH)
+summary(test$BYMSEXMTCH)
+
 ```
 
 
@@ -182,7 +211,7 @@ colnames(test)
 
 
 ```{r}
-test[,c(1:24,31:44)]<-lapply(test[,c(1:24,31:44)],factor)
+test[,c(1:23,30:45)]<-lapply(test[,c(1:23,30:45)],factor)
 str(test)
 summary(test)
 
@@ -194,10 +223,9 @@ summary(test)
 attach(test)
 ```
 
-
 ```{r, warning=FALSE, message=FALSE}
 ## English score results
-summary(aov(BYTXRSTD~BYSEX))
+summary(aov(BYTXRSTD~BYESEXMTCH))
 summary(aov(BYTXRSTD~BYERCEMTCH))
 summary(aov(BYTXRSTD~BYDOB_P))
 summary(aov(BYTXRSTD~BYFCOMP))
@@ -251,7 +279,7 @@ summary(aov(BYTXRSTD~BYWRKHRS))
 
 ```{r, warning=FALSE, message=FALSE}
 ## MATH score results
-summary(aov(BYTXMSTD~BYSEX))
+summary(aov(BYTXMSTD~BYMSEXMTCH))
 summary(aov(BYTXMSTD~BYMRCEMTCH))
 summary(aov(BYTXMSTD~BYDOB_P))
 summary(aov(BYTXMSTD~BYFCOMP))
@@ -327,9 +355,9 @@ cor.test(BYWRTNGA, BYTXRSTD,  method = "pearson")
 
 ```{r}
 colnames(test)
-datasub8<-test[,-c(6,18,35)]
-colnames(datasub8)
-attach(datasub8)
+datasub10<-test[,-c(5,17,34)]
+colnames(datasub10)
+attach(datasub10)
 ```
 
 ## chi sqaure separated by type of variable
@@ -433,20 +461,153 @@ chisq.test(table(BYURBAN,BYREGION))
 
 ### Final Variables
 ```{r}
-fdata<-datasub8[, c(1,2,3,8, 10, 12, 15, 16, 17, 21, 22, 23, 24, 26, 27, 28, 31, 33,34,35,36,37,38,39,40,41)]
+colnames(datasub10)
+fdata<-datasub10[, c(1,2,7, 9, 11, 14, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 30, 32,33,34,35,36,37,38,39,40,41,42)]
 str(fdata)
 
 ```
 
+
+
+
+
+
+
+## Histograms and Barplots
+```{r}
+par(mfrow=c(3,3))
+barplot(table(fdata$BYFCOMP), main = "BYFCOMP")
+barplot(table(fdata$BYSIBHOM), main = "BYSIBHOM")
+barplot(table(fdata$BYPARED), main = "BYPARED")
+barplot(table(fdata$BYINCOME), main = "BYINCOME")
+#barplot(table(fdata$BYGRDPRT), main = "BYGRDPRT")
+barplot(table(fdata$BYNONUSG), main = "BYNONUSG")
+barplot(table(fdata$BYWRKHRS), main = "BYWRKHRS")
+barplot(table(fdata$BYTEHDEG), main = "BYTEHDEG")
+barplot(table(fdata$BYTMHDEG), main = "BYTMHDEG")
+barplot(table(fdata$BYREGION), main = "BYREGION")
+par(mfrow=c(2,3))
+hist(fdata$BYTXRSTD, main = "BYTXRSTD")
+hist(fdata$BYTXMSTD, main = "BYTXMSTD")
+hist(fdata$BYACTCTL, main = "BYACTCTL")
+hist(fdata$BYSTPREP, main = "BYSTPREP")
+hist(fdata$BYWRTNGA, main = "BYWRTNGA")
+
+
+
+
+
+
+
+```
+
+
+
+
+
 ```{r}
 library(car)
-fdata[,c(1:26)]<-sapply(fdata[,c(1:26)],as.numeric)
-mod1<-lm(BYTXMSTD~BYSEX+BYSTLANG+BYFCOMP+BYSIBHOM+BYPARED+BYINCOME+BYGRDRPT+BYNONUSG+BYSCHPRG+BYTXACC+BYACTCTL+BYSTPREP+BYHMWRK+BYWRKHRS+BYTMHDEG+BYSCTRL+BYURBAN+BYREGION+BYAPIB+BYMRCEMTCH,data = fdata, na.action = na.omit)
-vif(mod1)
-summary(mod1)
-
-mod2<-lm(BYTXRSTD~BYSEX+BYSTLANG+BYFCOMP+BYSIBHOM+BYPARED+BYINCOME+BYGRDRPT+BYNONUSG+BYSCHPRG+BYTXACC+BYACTCTL+BYSTPREP+BYHMWRK+BYWRKHRS+BYTEHDEG+BYSCTRL+BYURBAN+BYREGION+BYAPIB+BYERCEMTCH+BYWRTNGA,data = fdata, na.action = na.omit)
-vif(mod2)
-summary(mod2)
+fdata$BYHMWRK<-as.numeric(fdata$BYHMWRK)
 ```
+
+### Redefine variables
+```{r}
+set.seed(22)
+library(car)
+### FCOMP now mother and father vs any other family structure
+fdata$BYFCOMP<-recode(fdata$BYFCOMP, "c('2','3','4','5','6','7','8','9')='2'")
+summary(fdata$BYFCOMP)
+
+### BYSIMHOM is 0 or 1 sibling vs 2+ siblings
+fdata$BYSIBHOM<-recode(fdata$BYSIBHOM, "c('0','1')='1';c('2','3','4','5','6','7')='2'")
+summary(fdata$BYSIBHOM)
+
+### BYPARED is High school or less, college dropout or 2 year program, 4 year college degree and igher
+fdata$BYPARED<-recode(fdata$BYPARED, "c('1','2')='0';c('3','4','5')='1';c('6','7','8')='2'")
+summary(fdata$BYPARED)
+
+### BYINCOME is now 35K or less, 35K-75K, 75K or more
+fdata$BYINCOME<-recode(fdata$BYINCOME, "c('1','2','3','4','5','6','7','8')='0';c('9','10')='1';c('11','12','13')='2'")
+summary(fdata$BYINCOME)
+
+### BYGRDRPT is did nt repeat, did repeat
+fdata$BYGRDRPT<-recode(fdata$BYGRDRPT, "c('1','2','97')='1'")
+summary(fdata$BYGRDRPT)
+
+###  BYNONUSG is did not go outside US, did go outside US
+fdata$BYNONUSG<-recode(fdata$BYNONUSG, "c('1','2','3','4','5','6','7','8','9','10')='1'")
+summary(fdata$BYNONUSG)
+
+### BYSTEXP is now attend 4 year college or less, Bachelors, Masters or higher
+fdata$BYSTEXP<-recode(fdata$BYSTEXP, "c('1','2','3','4')='0';c('5')='1';c('6','7')='2'")
+summary(fdata$BYSTEXP)
+
+### BYPARASP is now attend 4 year college or less, Bachelors, Masters or higher
+fdata$BYPARASP<-recode(fdata$BYPARASP, "c('1','2','3','4')='0';c('5')='1';c('6','7')='2'")
+summary(fdata$BYPARASP)
+
+### BYWRKHRS is now no work and work
+fdata$BYWRKHRS<-recode(fdata$BYWRKHRS, "c('1','2','3','4','5','6','7','8','9')='1'")
+summary(fdata$BYWRKHRS)
+
+### BTEHDEG is now Bachelors or lower, Higher Degree
+fdata$BYTEHDEG<-recode(fdata$BYTEHDEG, "c('1','2','3')='1';c('4','5','6','7')='2'")
+summary(fdata$BYTEHDEG)
+
+### BTMHDEG is now Bachelors or lower, Higher Degree
+fdata$BYTMHDEG<-recode(fdata$BYTMHDEG, "c('1','2','3')='1';c('4','5','6','7')='2'")
+summary(fdata$BYTMHDEG)
+
+
+```
+
+### Setting Up Reference Variable
+```{r}
+fdata$BYFCOMP=relevel(factor(fdata$BYFCOMP),ref="1")
+fdata$BYSIBHOM=relevel(factor(fdata$BYSIBHOM),ref="1")
+fdata$BYPARED=relevel(factor(fdata$BYPARED),ref="0")
+fdata$BYINCOME=relevel(factor(fdata$BYINCOME),ref="0")
+fdata$BYGRDRPT=relevel(factor(fdata$BYGRDRPT),ref="0")
+fdata$BYNONUSG=relevel(factor(fdata$BYNONUSG),ref="0")
+fdata$BYSTEXP=relevel(factor(fdata$BYSTEXP),ref="0")
+fdata$BYPARASP=relevel(factor(fdata$BYPARASP),ref="0")
+fdata$BYWRKHRS=relevel(factor(fdata$BYWRKHRS),ref="0")
+fdata$BYTEHDEG=relevel(factor(fdata$BYTEHDEG),ref="1")
+fdata$BYTMHDEG=relevel(factor(fdata$BYTMHDEG),ref="1")
+fdata$BYREGION=relevel(factor(fdata$BYREGION),ref="3")
+
+```
+
+
+
+
+```{r}
+colnames(fdata)
+```
+
+
+```{r}
+fdata$BYHMWRK<-as.numeric(fdata$BYHMWRK)
+
+mod1<-lm(BYTXMSTD~BYMSEXMTCH+BYMRCEMTCH+BYSTEXP*BYPARASP, data=fdata, na.action=na.omit)
+summary(mod1)
+mod2<-lm(BYTXRSTD~BYESEXMTCH+BYERCEMTCH+BYSTEXP*BYPARASP, data=fdata, na.action=na.omit)
+summary(mod2)
+
+mod3<-lm(BYTXMSTD~BYMSEXMTCH+BYSTLANG+BYFCOMP+BYSIBHOM+BYPARED+BYINCOME+BYGRDRPT+BYNONUSG+BYSCHPRG+BYTXACC+BYACTCTL+BYSTPREP+BYHMWRK+BYWRKHRS+BYTMHDEG+BYSCTRL+BYURBAN+BYREGION+BYAPIB+BYMRCEMTCH+BYMSEXMTCH+BYPARASP*BYSTEXP,data = fdata, na.action = na.omit)
+vif(mod3)
+summary(mod3)
+
+mod4<-lm(BYTXRSTD~BYESEXMTCH+BYSTLANG+BYFCOMP+BYSIBHOM+BYPARED+BYINCOME+BYGRDRPT+BYNONUSG+BYSCHPRG+BYTXACC+BYACTCTL+BYSTPREP+BYHMWRK+BYWRKHRS+BYTEHDEG+BYSCTRL+BYURBAN+BYREGION+BYAPIB+BYERCEMTCH+BYESEXMTCH+BYWRTNGA+BYPARASP*BYSTEXP,data = fdata, na.action = na.omit)
+vif(mod4)
+summary(mod4)
+```
+
+```{r}
+plot(mod1)
+plot(mod2)
+plot(mod3)
+plot(mod4)
+```
+
 
