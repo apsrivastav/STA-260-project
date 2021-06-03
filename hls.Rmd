@@ -1,6 +1,6 @@
 ---
 title: "HLS"
-author: "Sudesh Srivastav"
+author: "Apurv Srivastav"
 date: "5/13/2021"
 output: html_document
 ---
@@ -563,18 +563,18 @@ summary(fdata$BYTMHDEG)
 
 ### Setting Up Reference Variable
 ```{r}
-fdata$BYFCOMP=relevel(factor(fdata$BYFCOMP),ref="1")
-fdata$BYSIBHOM=relevel(factor(fdata$BYSIBHOM),ref="1")
-fdata$BYPARED=relevel(factor(fdata$BYPARED),ref="0")
-fdata$BYINCOME=relevel(factor(fdata$BYINCOME),ref="0")
-fdata$BYGRDRPT=relevel(factor(fdata$BYGRDRPT),ref="0")
-fdata$BYNONUSG=relevel(factor(fdata$BYNONUSG),ref="0")
+#fdata$BYFCOMP=relevel(factor(fdata$BYFCOMP),ref="1")
+#fdata$BYSIBHOM=relevel(factor(fdata$BYSIBHOM),ref="1")
+#fdata$BYPARED=relevel(factor(fdata$BYPARED),ref="0")
+#fdata$BYINCOME=relevel(factor(fdata$BYINCOME),ref="0")
+#fdata$BYGRDRPT=relevel(factor(fdata$BYGRDRPT),ref="0")
+#fdata$BYNONUSG=relevel(factor(fdata$BYNONUSG),ref="0")
 fdata$BYSTEXP=relevel(factor(fdata$BYSTEXP),ref="0")
 fdata$BYPARASP=relevel(factor(fdata$BYPARASP),ref="0")
-fdata$BYWRKHRS=relevel(factor(fdata$BYWRKHRS),ref="0")
-fdata$BYTEHDEG=relevel(factor(fdata$BYTEHDEG),ref="1")
-fdata$BYTMHDEG=relevel(factor(fdata$BYTMHDEG),ref="1")
-fdata$BYREGION=relevel(factor(fdata$BYREGION),ref="3")
+#fdata$BYWRKHRS=relevel(factor(fdata$BYWRKHRS),ref="0")
+#fdata$BYTEHDEG=relevel(factor(fdata$BYTEHDEG),ref="1")
+#fdata$BYTMHDEG=relevel(factor(fdata$BYTMHDEG),ref="1")
+#fdata$BYREGION=relevel(factor(fdata$BYREGION),ref="3")
 
 ```
 
@@ -582,7 +582,9 @@ fdata$BYREGION=relevel(factor(fdata$BYREGION),ref="3")
 
 
 ```{r}
-colnames(fdata)
+#str(fdata)
+fdata[,c(2,3,4,5,6,7,8,11,12,20,21,22,23,24,25,26)]<-sapply(fdata[,c(2,3,4,5,6,7,8,11,12,20,21,22,23,24,25,26)],as.numeric)
+str(fdata)
 ```
 
 
@@ -590,17 +592,28 @@ colnames(fdata)
 fdata$BYHMWRK<-as.numeric(fdata$BYHMWRK)
 
 mod1<-lm(BYTXMSTD~BYMSEXMTCH+BYMRCEMTCH+BYSTEXP*BYPARASP, data=fdata, na.action=na.omit)
-summary(mod1)
+summ.mod1<-summary(mod1)$coefficients[,c(1,3,4)]
+write.csv(summ.mod1,"C:/Users/ssrivas/Desktop/Apurv/UC Davis/UC Davis Courses/Spring Quarter 2021/STA 260/Final Project/mod1.csv")
+```
+
+```{r}
 mod2<-lm(BYTXRSTD~BYESEXMTCH+BYERCEMTCH+BYSTEXP*BYPARASP, data=fdata, na.action=na.omit)
-summary(mod2)
+summ.mod2<-summary(mod2)$coefficients[,c(1,3,4)]
+#write.csv(summ.mod2,"C:/Users/ssrivas/Desktop/Apurv/UC Davis/UC Davis Courses/Spring Quarter 2021/STA 260/Final Project/mod2.csv")
+```
 
-mod3<-lm(BYTXMSTD~BYMSEXMTCH+BYSTLANG+BYFCOMP+BYSIBHOM+BYPARED+BYINCOME+BYGRDRPT+BYNONUSG+BYSCHPRG+BYTXACC+BYACTCTL+BYSTPREP+BYHMWRK+BYWRKHRS+BYTMHDEG+BYSCTRL+BYURBAN+BYREGION+BYAPIB+BYMRCEMTCH+BYMSEXMTCH+BYPARASP*BYSTEXP,data = fdata, na.action = na.omit)
+```{r}
+mod3<-lm(BYTXMSTD~BYMSEXMTCH+BYMRCEMTCH+BYSTEXP*BYPARASP+BYSTLANG+BYFCOMP+BYSIBHOM+BYPARED+BYINCOME+BYGRDRPT+BYNONUSG+BYSCHPRG+BYTXACC+BYACTCTL+BYSTPREP+BYHMWRK+BYWRKHRS+BYTMHDEG+BYSCTRL+BYURBAN+BYREGION+BYAPIB,data = fdata, na.action = na.omit)
 vif(mod3)
-summary(mod3)
+summ.mod3<-summary(mod3)$coefficients[,c(1,3,4)]
+#write.csv(summ.mod3,"C:/Users/ssrivas/Desktop/Apurv/UC Davis/UC Davis Courses/Spring Quarter 2021/STA 260/Final Project/mod3.csv")
+```
 
-mod4<-lm(BYTXRSTD~BYESEXMTCH+BYSTLANG+BYFCOMP+BYSIBHOM+BYPARED+BYINCOME+BYGRDRPT+BYNONUSG+BYSCHPRG+BYTXACC+BYACTCTL+BYSTPREP+BYHMWRK+BYWRKHRS+BYTEHDEG+BYSCTRL+BYURBAN+BYREGION+BYAPIB+BYERCEMTCH+BYESEXMTCH+BYWRTNGA+BYPARASP*BYSTEXP,data = fdata, na.action = na.omit)
+```{r}
+mod4<-lm(BYTXRSTD~BYESEXMTCH+BYERCEMTCH+BYSTEXP*BYPARASP+BYSTLANG+BYFCOMP+BYSIBHOM+BYPARED+BYINCOME+BYGRDRPT+BYNONUSG+BYSCHPRG+BYTXACC+BYACTCTL+BYSTPREP+BYHMWRK+BYWRKHRS+BYTEHDEG+BYSCTRL+BYURBAN+BYREGION+BYAPIB+BYWRTNGA,data = fdata, na.action = na.omit)
 vif(mod4)
-summary(mod4)
+summ.mod4<-summary(mod4)$coefficients[,c(1,3,4)]
+#write.csv(summ.mod4,"C:/Users/ssrivas/Desktop/Apurv/UC Davis/UC Davis Courses/Spring Quarter 2021/STA 260/Final Project/mod4.csv")
 ```
 
 ```{r}
@@ -609,5 +622,41 @@ plot(mod2)
 plot(mod3)
 plot(mod4)
 ```
+
+```{r}
+summary(mod1)
+summary(mod2)
+summary(mod3)
+summary(mod4)
+```
+
+```{r}
+#confmod1<-confint(mod1)
+#write.csv(confmod1,"C:/Users/ssrivas/Desktop/Apurv/UC Davis/UC Davis Courses/Spring Quarter 2021/STA 260/Final Project/conf1mod1.csv")
+```
+
+```{r}
+#confmod2<-confint(mod2)
+#write.csv(confmod2,"C:/Users/ssrivas/Desktop/Apurv/UC Davis/UC Davis Courses/Spring Quarter 2021/STA 260/Final Project/conf1mod2.csv")
+```
+
+```{r}
+#confmod3<-confint(mod3)
+#write.csv(confmod3,"C:/Users/ssrivas/Desktop/Apurv/UC Davis/UC Davis Courses/Spring Quarter 2021/STA 260/Final Project/conf1mod3.csv")
+```
+
+```{r}
+#confmod4<-confint(mod4)
+#write.csv(confmod4,"C:/Users/ssrivas/Desktop/Apurv/UC Davis/UC Davis Courses/Spring Quarter 2021/STA 260/Final Project/conf1mod4.csv")
+```
+
+```{r}
+
+levels(fdata$BYPARASP)<-c("High School","Bachelor's","Post-Graduate")
+levels(fdata$BYSTEXP)<-c("High School","Bachelor's","Post-Graduate")
+interaction.plot(fdata$BYSTEXP,fdata$BYPARASP,fdata$BYTXMSTD, mean, main = "Interaction b/w Parents and Student expectations for Math Scores",xlab = "Students Expectations",ylab = "Math Standardized Scores",trace.label = "Parents Expectations")
+interaction.plot(fdata$BYSTEXP,fdata$BYPARASP,fdata$BYTXRSTD, mean, main = "Interaction b/w Parents and Student expectations for Reading Scores",xlab = "Students Expectations",ylab = "Reading Standardized Scores",trace.label = "Parents Exectations")
+```
+
 
 
