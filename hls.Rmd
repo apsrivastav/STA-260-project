@@ -648,4 +648,88 @@ anova(mod1,mod3)
 anova(mod2,mod4)
 ```
 
+```{r BYMSEXMTCH}
+par(mfrow=c(1,2))
+#math
+boxplot(BYTXMSTD~BYMSEXMTCH,data=fdata, main="Plot of Math Score by Sex Match",
+   xlab="Sex Match(0=no match,1=match)", ylab="Math Score")
 
+#read
+boxplot(BYTXRSTD~BYMSEXMTCH,data=fdata, main="Plot of Reading Score by Sex Match",
+   xlab="Sex Match(0=no match,1=match)", ylab="Reading Score")
+summary(fdata$BYMSEXMTCH)
+fs1=fdata[fdata$BYMSEXMTCH==1,]
+summary(fs1$BYTXMSTD)
+summary(fs1$BYTXRSTD)
+fs0=fdata[fdata$BYMSEXMTCH==0,]
+summary(fs0$BYTXMSTD)
+summary(fs0$BYTXRSTD)
+```
+```{r BYERCEMTCH}
+par(mfrow=c(1,2))
+#math
+boxplot(BYTXMSTD~BYERCEMTCH,data=fdata, main="Plot of Math Score by Race Match",
+   xlab="Race Match(0=no match,1=match)", ylab="Math Score")
+
+#read
+boxplot(BYTXRSTD~BYERCEMTCH,data=fdata, main="Plot of Reading Score by Race Match",
+   xlab="Race Match(0=no match,1=match)", ylab="Reading Score")
+summary(fdata$BYERCEMTCH)
+fr1=fdata[fdata$BYERCEMTCH==1,]
+summary(fr1$BYTXMSTD)
+summary(fr1$BYTXRSTD)
+fr0=fdata[fdata$BYERCEMTCH==0,]
+summary(fr0$BYTXMSTD)
+summary(fr0$BYTXRSTD)
+```
+```{r}
+
+levels(fdata$BYERCEMTCH)<-c("mismatch","match")
+levels(fdata$BYMSEXMTCH)<-c("mismatch","match")
+interaction.plot(fdata$BYERCEMTCH,fdata$BYMSEXMTCH,fdata$BYTXMSTD, mean, main = "Interaction b/w Race and Sex Match for Math Scores",xlab = "Race Match",ylab = "Math Standardized Scores",trace.label = "Sex match")
+interaction.plot(fdata$BYERCEMTCH,fdata$BYMSEXMTCH,fdata$BYTXRSTD, mean, main = "Interaction b/w Race and Sex Match for Reading Scores",xlab = "Race Match",ylab = "Reading Standardized Scores",trace.label = "Sex match")
+```
+
+```{r BYPARASP}
+par(mfrow=c(1,2))
+#math
+boxplot(BYTXMSTD~BYPARASP,data=fdata, 
+   xlab="Parent expectations", ylab="Math Score")
+
+#read
+boxplot(BYTXRSTD~BYPARASP,data=fdata,
+   xlab="Parent expectations", ylab="Reading Score")
+summary(fdata$BYPARASP)
+fp0=fdata[fdata$BYPARASP=="High School",]
+summary(fp0$BYTXMSTD)
+summary(fp0$BYTXRSTD)
+fp1=fdata[fdata$BYPARASP=="Bachelor's",]
+summary(fp1$BYTXMSTD)
+summary(fp1$BYTXRSTD)
+fp2=fdata[fdata$BYPARASP=="Post-Graduate",]
+summary(fp2$BYTXMSTD)
+summary(fp2$BYTXRSTD)
+```
+
+```{r BYSTEXP}
+par(mfrow=c(1,2))
+#math
+boxplot(BYTXMSTD~BYSTEXP,data=fdata, 
+   xlab="Student expectations", ylab="Math Score")
+
+#read
+boxplot(BYTXRSTD~BYSTEXP,data=fdata, 
+   xlab="Student expectations", ylab="Reading Score")
+
+summary(fdata$BYSTEXP)
+fp0=fdata[fdata$BYSTEXP=="High School",]
+summary(fp0$BYTXMSTD)
+summary(fp0$BYTXRSTD)
+fp1=fdata[fdata$BYSTEXP=="Bachelor's",]
+summary(fp1$BYTXMSTD)
+summary(fp1$BYTXRSTD)
+fp2=fdata[fdata$BYSTEXP=="Post-Graduate",]
+summary(fp2$BYTXMSTD)
+summary(fp2$BYTXRSTD)
+
+```
