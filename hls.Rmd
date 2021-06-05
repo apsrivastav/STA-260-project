@@ -733,3 +733,49 @@ summary(fp2$BYTXMSTD)
 summary(fp2$BYTXRSTD)
 
 ```
+
+```{r means.for.barplots}
+
+read.indian.yes <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 1 & datasub5$BYERCEMTCH == 1)])
+read.indian.no <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 1 & datasub5$BYERCEMTCH == 0)])
+read.asian.yes <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 2 & datasub5$BYERCEMTCH == 1)])
+read.asian.no <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 2 & datasub5$BYERCEMTCH == 0)])
+read.black.yes <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 3 & datasub5$BYERCEMTCH == 1)])
+read.black.no <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 3 & datasub5$BYERCEMTCH == 0)])
+read.hispanicnot.yes <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 4 & datasub5$BYERCEMTCH == 1)])
+read.hispanicnot.no <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 4 & datasub5$BYERCEMTCH == 0)])
+read.hispanicspec.yes <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 5 & datasub5$BYERCEMTCH == 1)])
+read.hispanicspec.no <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 5 & datasub5$BYERCEMTCH == 0)])
+read.more.yes <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 6 & datasub5$BYERCEMTCH == 1)])
+read.more.no <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 6 & datasub5$BYERCEMTCH == 0)])
+read.white.yes <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 7 & datasub5$BYERCEMTCH == 1)])
+read.white.no <- mean(datasub5$BYTXRSTD[which(datasub5$BYRACE == 7 & datasub5$BYERCEMTCH == 0)])
+
+math.indian.yes <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 1 & datasub6$BYMRCEMTCH == 1)])
+math.indian.no <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 1 & datasub6$BYMRCEMTCH == 0)])
+math.asian.yes <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 2 & datasub6$BYMRCEMTCH == 1)])
+math.asian.no <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 2 & datasub6$BYMRCEMTCH == 0)])
+math.black.yes <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 3 & datasub6$BYMRCEMTCH == 1)])
+math.black.no <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 3 & datasub6$BYMRCEMTCH == 0)])
+math.hispanicnot.yes <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 4 & datasub6$BYMRCEMTCH == 1)])
+math.hispanicnot.no <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 4 & datasub6$BYMRCEMTCH == 0)])
+math.hispanicspec.yes <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 5 & datasub6$BYMRCEMTCH == 1)])
+math.hispanicspec.no <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 5 & datasub6$BYMRCEMTCH == 0)])
+math.more.yes <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 6 & datasub6$BYMRCEMTCH == 1)])
+math.more.no <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 6 & datasub6$BYMRCEMTCH == 0)])
+math.white.yes <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 7 & datasub6$BYMRCEMTCH == 1)])
+math.white.no <- mean(datasub6$BYTXMSTD[which(datasub6$BYRACE == 7 & datasub6$BYMRCEMTCH == 0)])
+
+math.girls.yes <- mean(datasub7$BYTXMSTD[which(datasub7$BYSEX == 2 & datasub7$BYMRCEMTCH == 1)])
+math.girls.no <- mean(datasub7$BYTXMSTD[which(datasub7$BYRACE == 2 & datasub7$BYMRCEMTCH == 0)])
+math.boys.yes <- mean(datasub7$BYTXMSTD[which(datasub7$BYSEX == 1 & datasub7$BYMRCEMTCH == 1)])
+math.boys.no <- mean(datasub7$BYTXMSTD[which(datasub7$BYRACE == 1 & datasub7$BYMRCEMTCH == 0)])
+
+
+read.girls.yes <- mean(datasub7$BYTXRSTD[which(datasub7$BYSEX == 2 & datasub7$BYESEXMTCH == 1)])
+read.girls.no <- mean(datasub7$BYTXRSTD[which(datasub7$BYRACE == 2 & datasub7$BYESEXMTCH == 0)])
+read.boys.yes <- mean(datasub7$BYTXRSTD[which(datasub7$BYSEX == 1 & datasub7$BYESEXMTCH == 1)])
+read.boys.no <- mean(datasub7$BYTXRSTD[which(datasub7$BYRACE == 1 & datasub7$BYESEXMTCH == 0)])
+
+
+```
